@@ -1,6 +1,3 @@
-
-
-
 /**
  * Custom blocks
  * KEYESTUDIO Motor Shield Pins
@@ -25,7 +22,7 @@ namespace blubot {
     /**
       * Test robot forward (or backward) at speed.
       */
-    //% blockId="RBGo" block="test motors\\%"
+    //% blockId="RBGo" block="test motors"
     //% weight=100
     //% subcategory=Motors
     //% group="Motor Drive"
