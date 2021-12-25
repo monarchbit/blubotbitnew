@@ -22,12 +22,12 @@ namespace blubot {
     /**
       * Test robot forward (or backward) at speed.
       */
-    //% blockId="RBGo" block="test motors"
+    //% blockId="RBGo" block="test motors//%"
     //% weight=100
     //% subcategory=Motors
     //% group="Motor Drive"
     //% blockGap=8
-    export function go(direction: number, speed: number): void {
+    export function go(): void {
      
                 pins.analogWritePin(lMotorA0,600);
                 pins.digitalWritePin(lMotorD0, 1);
