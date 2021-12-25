@@ -19,9 +19,6 @@ namespace blubot {
     let rMotorD1 = DigitalPin.P16;
     let rMotorA0 = AnalogPin.P2;
 
-    /**
-
-     */
     //% block
     export function go(): void {
      
