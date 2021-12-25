@@ -1,46 +1,4 @@
 
-/**
-  * Enumeration of motors.
-  */
-enum RBMotor {
-    //% block="left"
-    Left,
-    //% block="right"
-    Right,
-    //% block="both"
-    Both
-}
-
-/**
-  * Enumeration of forward/reverse directions
-  */
-enum RBDirection {
-    //% block="forward"
-    Forward,
-    //% block="reverse"
-    Reverse
-}
-
-/**
-  * Enumeration of directions.
-  */
-enum RBRobotDirection {
-    //% block="left"
-    Left,
-    //% block="right"
-    Right
-}
-
-/**
-  * Stop modes. Coast or Brake
-  */
-enum RBStopMode {
-    //% block="no brake"
-    Coast,
-    //% block="brake"
-    Brake
-}
-
 
 
 /**
@@ -64,191 +22,44 @@ namespace blubot {
     let rMotorD1 = DigitalPin.P16;
     let rMotorA0 = AnalogPin.P2;
 
-
-    function clamp(value: number, min: number, max: number): number {
-        return Math.max(Math.min(max, value), min);
-    }
-
-
-    // New Style Motor Blocks
-    // slow PWM frequency for slower speeds to improve torque
-    function setPWM(speed: number): void {
-        if (speed < 200) {
-            pins.analogSetPeriod(AnalogPin.P1, 20000);
-            pins.analogSetPeriod(AnalogPin.P2, 20000);
-        }
-        else if (speed < 300) {
-            pins.analogSetPeriod(AnalogPin.P1, 40000);
-            pins.analogSetPeriod(AnalogPin.P2, 40000);
-        }
-        else {
-            pins.analogSetPeriod(AnalogPin.P1, 60000);
-            pins.analogSetPeriod(AnalogPin.P2, 60000);
-        }
-    }
-
     /**
-      * Move robot forward (or backward) at speed.
-      * @param direction Move Forward or Reverse
-      * @param speed speed of motor between 0 and 100. eg: 60
+      * Test robot forward (or backward) at speed.
       */
-    //% blockId="RBGo" block="go%direction|at speed%speed|\\%"
-    //% speed.min=0 speed.max=100
+    //% blockId="RBGo" block="test motors\\%"
     //% weight=100
     //% subcategory=Motors
     //% group="Motor Drive"
     //% blockGap=8
-    export function go(direction: RBDirection, speed: number): void {
-        move(RBMotor.Both, direction, speed);
-    }
-
-    /**
-      * Move robot forward (or backward) at speed for milliseconds
-      * @param direction Move Forward or Reverse
-      * @param speed speed of motor between 0 and 100. eg: 60
-      * @param milliseconds duration in milliseconds to drive forward for, then stop. eg: 400
-      */
-    //% blockId="RBGoms" block="go%direction|at speed%speed|\\% for%milliseconds|ms"
-    //% speed.min=0 speed.max=100
-    //% weight=90
-    //% subcategory=Motors
-    //% group="New style blocks"
-    //% blockGap=8
-    export function goms(direction: RBDirection, speed: number, milliseconds: number): void {
-        go(direction, speed);
-        basic.pause(milliseconds);
-        stop(RBStopMode.Coast);
-    }
-
-    /**
-      * Rotate robot in direction at speed
-      * @param direction direction to turn
-      * @param speed speed of motors (0 to 100). eg: 60
-      */
-    //% blockId="RBRotate" block="spin%direction|at speed%speed|\\%"
-    //% speed.min=0 speed.max=100
-    //% weight=80
-    //% subcategory=Motors
-    //% group="New style blocks"
-    //% blockGap=8
-    export function rotate(direction: RBRobotDirection, speed: number): void {
-        if (direction == RBRobotDirection.Left) {
-            move(RBMotor.Left, RBDirection.Reverse, speed);
-            move(RBMotor.Right, RBDirection.Forward, speed);
-        }
-        else if (direction == RBRobotDirection.Right) {
-            move(RBMotor.Left, RBDirection.Forward, speed);
-            move(RBMotor.Right, RBDirection.Reverse, speed);
-        }
-    }
-
-    /**
-      * Rotate robot in direction at speed for milliseconds.
-      * @param direction direction to spin
-      * @param speed speed of motor between 0 and 100. eg: 60
-      * @param milliseconds duration in milliseconds to spin for, then stop. eg: 400
-      */
-    //% blockId="RBRotatems" block="spin%direction|at speed%speed|\\% for%milliseconds|ms"
-    //% speed.min=0 speed.max=100
-    //% weight=70
-    //% subcategory=Motors
-    //% group="New style blocks"
-    //% blockGap=8
-    export function rotatems(direction: RBRobotDirection, speed: number, milliseconds: number): void {
-        rotate(direction, speed);
-        basic.pause(milliseconds);
-        stop(RBStopMode.Coast);
-    }
-
-    /**
-      * Stop robot by coasting slowly to a halt or braking
-      * @param mode Brakes on or off
-      */
-    //% blockId="RBstop" block="stop with%mode"
-    //% weight=60
-    //% subcategory=Motors
-    //% group="New style blocks"
-    //% blockGap=8
-    export function stop(mode: RBStopMode): void {
-        let stopMode = 0;
-        if (mode == RBStopMode.Brake)
-            stopMode = 1;
-        pins.analogWritePin(lMotorA0,0);
-        pins.digitalWritePin(lMotorD0, stopMode);
-        pins.digitalWritePin(lMotorD1, stopMode);
-        pins.analogWritePin(rMotorA0,0);
-        pins.digitalWritePin(rMotorD0, stopMode);
-        pins.digitalWritePin(rMotorD1, stopMode);
-    }
-
-    /**
-      * Move individual motors forward or reverse
-      * @param motor motor to drive
-      * @param direction select forwards or reverse
-      * @param speed speed of motor between 0 and 100. eg: 60
-      */
-    //% blockId="RBMove" block="move%motor|motor(s)%direction|at speed%speed|\\%"
-    //% weight=50
-    //% speed.min=0 speed.max=100
-    //% subcategory=Motors
-    //% group="New style blocks"
-    //% blockGap=8
-    export function move(motor: RBMotor, direction: RBDirection, speed: number): void {
-        speed = clamp(speed, 0, 100) * 10.23;
-        setPWM(speed);
-        let lSpeed = Math.round(speed * (100 - leftBias) / 100);
-        let rSpeed = Math.round(speed * (100 - rightBias) / 100);
-        if ((motor == RBMotor.Left) || (motor == RBMotor.Both)) {
-            if (direction == RBDirection.Forward) {
-                //pins.analogWritePin(lMotorA0, lSpeed);
+    export function go(direction: number, speed: number): void {
+     
                 pins.analogWritePin(lMotorA0,600);
                 pins.digitalWritePin(lMotorD0, 1);
                 pins.digitalWritePin(lMotorD1, 0);
-            }
-            else {
-                //pins.analogWritePin(lMotorA0, lSpeed);
+                pins.analogWritePin(rMotorA0,600);
+                pins.digitalWritePin(rMotorD0, 1);
+                pins.digitalWritePin(rMotorD1, 0);
+                basic.pause(3000);
+                pins.analogWritePin(lMotorA0, 0);
+                pins.digitalWritePin(lMotorD0, 0);
+                pins.digitalWritePin(lMotorD1, 0);
+                pins.analogWritePin(rMotorA0, 0);
+                pins.digitalWritePin(rMotorD0, 0);
+                pins.digitalWritePin(rMotorD1, 0);
+                basic.pause(3000);
                 pins.analogWritePin(lMotorA0,600);
                 pins.digitalWritePin(lMotorD0, 0);
                 pins.digitalWritePin(lMotorD1, 1);
-            }
-        }
-        if ((motor == RBMotor.Right) || (motor == RBMotor.Both)) {
-            if (direction == RBDirection.Forward) {
-                //pins.analogWritePin(rMotorA0, rSpeed);
-                pins.analogWritePin(lMotorA0,600);
-                pins.digitalWritePin(rMotorD0, 1);
-                pins.digitalWritePin(rMotorD1, 0);
-            }
-            else {
-                //pins.analogWritePin(rMotorA0, rSpeed);
-                pins.analogWritePin(lMotorA0,600);
+                pins.analogWritePin(rMotorA0,600);
                 pins.digitalWritePin(rMotorD0, 0);
                 pins.digitalWritePin(rMotorD1, 1);
-            }
-        }
-    }
+                basic.pause(3000);
+                pins.analogWritePin(lMotorA0, 0);
+                pins.digitalWritePin(lMotorD0, 0);
+                pins.digitalWritePin(lMotorD1, 0);
+                pins.analogWritePin(rMotorA0, 0);
+                pins.digitalWritePin(rMotorD0, 0);
+                pins.digitalWritePin(rMotorD1, 0);
 
-    /**
-      * Set left/right bias to match motors
-      * @param direction direction to turn more (if robot goes right, set this to left)
-      * @param bias percentage of speed to bias with eg: 10
-      */
-    //% blockId="RBBias" block="bias%direction|by%bias|\\%"
-    //% bias.min=0 bias.max=80
-    //% weight=40
-    //% subcategory=Motors
-    //% group="New style blocks"
-    //% blockGap=8
-    export function RBBias(direction: RBRobotDirection, bias: number): void {
-        bias = clamp(bias, 0, 80);
-        if (direction == RBRobotDirection.Left) {
-            leftBias = bias;
-            rightBias = 0;
-        }
-        else {
-            leftBias = 0;
-            rightBias = bias;
-        }
     }
 
 
