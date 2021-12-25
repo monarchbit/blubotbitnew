@@ -42,31 +42,6 @@ enum RBStopMode {
 }
 
 
-/**
- * Pre-Defined pixel colours
- */
-enum RBColors {
-    //% block=red
-    Red = 0xff0000,
-    //% block=orange
-    Orange = 0xffa500,
-    //% block=yellow
-    Yellow = 0xffff00,
-    //% block=green
-    Green = 0x00ff00,
-    //% block=blue
-    Blue = 0x0000ff,
-    //% block=indigo
-    Indigo = 0x4b0082,
-    //% block=violet
-    Violet = 0x8a2be2,
-    //% block=purple
-    Purple = 0xff00ff,
-    //% block=white
-    White = 0xffffff,
-    //% block=black
-    Black = 0x000000
-}
 
 /**
  * Custom blocks
@@ -82,7 +57,6 @@ namespace blubot {
     let leftBias = 0;
     let rightBias = 0;
     let stbyPin = DigitalPin.P14;
-
     let lMotorD0 = DigitalPin.P13;
     let lMotorD1 = DigitalPin.P12;
     let lMotorA0 = AnalogPin.P1;
@@ -100,12 +74,12 @@ namespace blubot {
     // slow PWM frequency for slower speeds to improve torque
     function setPWM(speed: number): void {
         if (speed < 200) {
-            pins.analogSetPeriod(AnalogPin.P1, 60000);
-            pins.analogSetPeriod(AnalogPin.P2, 60000);
+            pins.analogSetPeriod(AnalogPin.P1, 20000);
+            pins.analogSetPeriod(AnalogPin.P2, 20000);
         }
         else if (speed < 300) {
-            pins.analogSetPeriod(AnalogPin.P1, 60000);
-            pins.analogSetPeriod(AnalogPin.P2, 60000);
+            pins.analogSetPeriod(AnalogPin.P1, 40000);
+            pins.analogSetPeriod(AnalogPin.P2, 40000);
         }
         else {
             pins.analogSetPeriod(AnalogPin.P1, 60000);
@@ -122,7 +96,7 @@ namespace blubot {
     //% speed.min=0 speed.max=100
     //% weight=100
     //% subcategory=Motors
-    //% group="New style blocks"
+    //% group="Motor Drive"
     //% blockGap=8
     export function go(direction: RBDirection, speed: number): void {
         move(RBMotor.Both, direction, speed);
@@ -199,8 +173,10 @@ namespace blubot {
         let stopMode = 0;
         if (mode == RBStopMode.Brake)
             stopMode = 1;
+        pins.analogWritePin(lMotorA0,0);
         pins.digitalWritePin(lMotorD0, stopMode);
         pins.digitalWritePin(lMotorD1, stopMode);
+        pins.analogWritePin(rMotorA0,0);
         pins.digitalWritePin(rMotorD0, stopMode);
         pins.digitalWritePin(rMotorD1, stopMode);
     }
@@ -224,24 +200,28 @@ namespace blubot {
         let rSpeed = Math.round(speed * (100 - rightBias) / 100);
         if ((motor == RBMotor.Left) || (motor == RBMotor.Both)) {
             if (direction == RBDirection.Forward) {
-                pins.analogWritePin(lMotorA0, lSpeed);
+                //pins.analogWritePin(lMotorA0, lSpeed);
+                pins.analogWritePin(lMotorA0,600);
                 pins.digitalWritePin(lMotorD0, 1);
                 pins.digitalWritePin(lMotorD1, 0);
             }
             else {
-                pins.analogWritePin(lMotorA0, lSpeed);
+                //pins.analogWritePin(lMotorA0, lSpeed);
+                pins.analogWritePin(lMotorA0,600);
                 pins.digitalWritePin(lMotorD0, 0);
                 pins.digitalWritePin(lMotorD1, 1);
             }
         }
         if ((motor == RBMotor.Right) || (motor == RBMotor.Both)) {
             if (direction == RBDirection.Forward) {
-                pins.analogWritePin(rMotorA0, rSpeed);
+                //pins.analogWritePin(rMotorA0, rSpeed);
+                pins.analogWritePin(lMotorA0,600);
                 pins.digitalWritePin(rMotorD0, 1);
                 pins.digitalWritePin(rMotorD1, 0);
             }
             else {
-                pins.analogWritePin(rMotorA0, rSpeed);
+                //pins.analogWritePin(rMotorA0, rSpeed);
+                pins.analogWritePin(lMotorA0,600);
                 pins.digitalWritePin(rMotorD0, 0);
                 pins.digitalWritePin(rMotorD1, 1);
             }
