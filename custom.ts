@@ -104,11 +104,11 @@ namespace blubot {
             pins.analogSetPeriod(AnalogPin.P2, 60000);
         }
         else if (speed < 300) {
-            pins.analogSetPeriod(AnalogPin.P1, 40000);
+            pins.analogSetPeriod(AnalogPin.P1, 60000);
             pins.analogSetPeriod(AnalogPin.P2, 60000);
         }
         else {
-            pins.analogSetPeriod(AnalogPin.P1, 30000);
+            pins.analogSetPeriod(AnalogPin.P1, 60000);
             pins.analogSetPeriod(AnalogPin.P2, 60000);
         }
     }
