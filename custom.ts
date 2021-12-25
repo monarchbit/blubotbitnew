@@ -20,13 +20,9 @@ namespace blubot {
     let rMotorA0 = AnalogPin.P2;
 
     /**
-      * Test robot forward (or backward) at speed.
-      */
-    //% blockId="RBGo" block="test motors//%"
-    //% weight=100
-    //% subcategory=Motors
-    //% group="Motor Drive"
-    //% blockGap=8
+
+     */
+    //% block
     export function go(): void {
      
                 pins.analogWritePin(lMotorA0,600);
